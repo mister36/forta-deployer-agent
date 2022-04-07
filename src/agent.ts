@@ -6,14 +6,16 @@ import {
   FindingType,
 } from "forta-agent";
 
-import { ERC721_ADDRESS, TRANSFER_EVENT } from "./constants";
+import { ERC721_ADDRESS, NETHERMIND_ADDRESS, CREATE_AGENT } from "./constants";
 
 const handleTransaction: HandleTransaction = async (
   txEvent: TransactionEvent
 ) => {
   const findings: Finding[] = [];
 
-  const erc721Transfers = txEvent.filterLog(TRANSFER_EVENT, ERC721_ADDRESS);
+  if (txEvent.from !== NETHERMIND_ADDRESS.toLowerCase()) return findings;
+
+  const erc721Transfers = txEvent.filterFunction(CREATE_AGENT, ERC721_ADDRESS);
 
   if (erc721Transfers.length === 0) return findings;
 
